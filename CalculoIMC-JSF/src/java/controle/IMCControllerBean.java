@@ -6,11 +6,13 @@
 package controle;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import negocio.Usuario;
+import persistencia.ImcSQLDAO;
 
 /**
  *
@@ -20,6 +22,7 @@ import negocio.Usuario;
 @RequestScoped
 public class IMCControllerBean implements Serializable {
     private Usuario usuario;
+   
         public IMCControllerBean(){
             this.usuario = new Usuario(); 
         }
@@ -29,13 +32,23 @@ public class IMCControllerBean implements Serializable {
         }
         
         public void calcularIMCTradicional(){
-        
-        
             FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(null,new FacesMessage("CalculoIMC", "O seu IMC é:" + this.getUsuario().calculateIMC())); 
-          
-            
-   
-    }
+            context.addMessage(null,new FacesMessage( this.getUsuario().calculateIMCTradicional())); 
+        }
         
+        public void calcularIMCOxford(){
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage(null, new FacesMessage(this.getUsuario().calculateIMCOxford()));
+        }
+        
+        public void calcularIMCHilderburg(){
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage(null, new FacesMessage(this.getUsuario().calculateIMCHilderburg()));
+        }
+        
+        public void salvarIMC()  throws SQLException, ClassNotFoundException, Exception{
+            new ImcSQLDAO().inserir(this.getUsuario());
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage(null, new FacesMessage("IMC Salvo com sucesso"));
+        }
 }

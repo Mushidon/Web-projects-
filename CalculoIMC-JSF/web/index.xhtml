@@ -4,21 +4,29 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui">
     <h:head>
-        <title>Facelet Title</title>
+        <title>IMCJSF</title>
     </h:head>
     <h:body>
         <h:form>
             <p:growl id="msgGrowl" showDetail="true" sticky="false"/>
-        <p:panelGrid columns="2" >
-            <h:outputLabel for="Peso" value="Peso:"></h:outputLabel>
-            <p:inputText id="peso" value="#{imcBean.usuario.peso}" required="true"></p:inputText>
-            
-             <h:outputLabel for="Altura" value="Altura:"></h:outputLabel>
-            <p:inputText id="altura" value="#{imcBean.usuario.altura}"></p:inputText>
-        </p:panelGrid>
-        
-    <p:commandButton value="IMC Tradicional" actionListener="#{imcBean.calcularIMCTradicional()}" update="msgGrowl" />
-  </h:form>  
- </h:body>
+            <p:panelGrid columns="2"  >
+             
+
+                    <h:outputLabel for="Peso" value="Peso:"></h:outputLabel>
+                    <p:inputText id="peso" value="#{imcBean.usuario.peso}" style="text-align:center" required="true"></p:inputText>
+
+                    <h:outputLabel for="Altura" value="Altura:"></h:outputLabel>
+                    <p:inputText id="altura" value="#{imcBean.usuario.altura}" style="text-align:center" required="true"></p:inputText>
+             
+            </p:panelGrid>
+            <br>
+            <p:commandButton value="IMC Tradicional" style="text-align:center" actionListener="#{imcBean.calcularIMCTradicional()}" update="msgGrowl" />
+            <p:commandButton value="IMC Oxford" style="text-align:center" actionListener="#{imcBean.calcularIMCOxford()}" update="msgGrowl" />
+            <p:commandButton value="IMC Hilderburg" style="text-align:center" actionListener="#{imcBean.calcularIMCHilderburg()}" update="msgGrowl" />
+            </br>
+           <p:commandButton value="Salvar IMC" style="text-align:center" actionListener="#{imcBean.salvarIMC()}" update="msgGrowl" />
+
+        </h:form>  
+    </h:body>
 </html>
 

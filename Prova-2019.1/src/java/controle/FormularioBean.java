@@ -8,52 +8,82 @@ package controle;
 import Persistência.FormularioSQLDAO;
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import javax.enterprise.context.RequestScoped;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import javax.faces.bean.ManagedBean;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.inject.Named;
 import modelo.Formulario;
 
 /**
  *
  * @author Aluno
  */
-@Named(value = "formularioBean")
-@RequestScoped
+@ManagedBean(name = "formularioBean")
+@SessionScoped
 public class FormularioBean implements Serializable {
 
     private Formulario formulario;
+    private List<Formulario> formularios;
+    private Formulario formularioSelecionado;
 
     public FormularioBean() {
         this.formulario = new Formulario();
+
     }
 
     public Formulario getFormulario() {
         return this.formulario;
     }
 
-    public void save() throws SQLException, ClassNotFoundException, Exception {
-        new FormularioSQLDAO().save(this.getFormulario());
+    public Formulario getFormularioSelecionado() {
+        return formularioSelecionado;
+    }
+
+    public void setFormularioSelecionado(Formulario formulario) {
+        this.formularioSelecionado = formulario;
+    }
+
+    public List<Formulario> getFormularios() throws SQLException, ClassNotFoundException, ParseException {
+        formularios = new ArrayList<Formulario>();
+        this.formularios = new FormularioSQLDAO().findAll();
+        return formularios;
+    }
+
+    public void enviar() throws SQLException, ClassNotFoundException, Exception {
+        FormularioSQLDAO banco = this.getBanco();
+        banco.save(this.getFormulario());
         FacesContext context = FacesContext.getCurrentInstance();
         context.addMessage(null, new FacesMessage("Dados salvos com sucesso"));
     }
-    
-      public void buscarData() throws SQLException, ClassNotFoundException, Exception {
-        FormularioSQLDAO formularioDAO = new FormularioSQLDAO();
-        Formulario formularioEncontrado = formularioDAO.buscarByRemetente(this.formulario.getRemetente());
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        sdf.setLenient(false);
+
+    public void remover() throws SQLException, ClassNotFoundException, Exception {
+        FormularioSQLDAO banco = this.getBanco();
+        banco.delete(this.formularioSelecionado.remetente);
+        formularios.remove(this.formularioSelecionado);
         FacesContext context = FacesContext.getCurrentInstance();
-        context.addMessage(null, new FacesMessage("Seu registro foi encontrado e a data é:" + sdf.format(formularioEncontrado.getData())));
+        context.addMessage(null, new FacesMessage("Item removido"));
     }
-    
-    public void exibirData(){
-        
+
+    public void alterar() throws SQLException, ClassNotFoundException, Exception {
+        FormularioSQLDAO banco = this.getBanco();
+        banco.update(this.getFormulario());
+        FacesContext context = FacesContext.getCurrentInstance();
+        context.addMessage(null, new FacesMessage("Dados alterados com sucesso"));
+    }
+
+    public String formatador(Date data) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         sdf.setLenient(false);
-        
-        FacesContext context = FacesContext.getCurrentInstance();
-        context.addMessage(null, new FacesMessage("Data de envio do email:" + sdf.format(this.getFormulario().getData())));
+        return sdf.format(data);
+
+    }
+
+    public FormularioSQLDAO getBanco() throws SQLException, ClassNotFoundException {
+        return new FormularioSQLDAO();
     }
 }

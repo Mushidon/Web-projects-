@@ -10,25 +10,20 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.sql.Date;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import modelo.Formulario;
 
 /**
  *
  * @author Aluno
- * 
- *create table formulario (
-	destinatario varchar(255),
-	telefaxDestinatario varchar(255),
-	emailDestinatario varchar(255),
-	remetente varchar(255),
-	remetenteTelefax varchar(255),
-	remetenteEmail varchar(255),
-	data date
-); 
- * 
+ *
+ * create table formulario ( destinatario varchar(255), telefaxDestinatario
+ * varchar(255), emailDestinatario varchar(255), remetente varchar(255),
+ * remetenteTelefax varchar(255), remetenteEmail varchar(255), data date );
+ *
  */
 public class FormularioSQLDAO {
 
@@ -37,8 +32,10 @@ public class FormularioSQLDAO {
     private static final String DB_USER = "SA";
     private static final String DB_PWD = "";
     private static final String INSERIR = "INSERT INTO formulario(destinatario,telefaxDestinatario,emailDestinatario,remetente,remetenteTelefax,remetenteEmail,data) VALUES(?,?,?,?,?,?,?)";
-    private static final String BUSCAR = "SELECT* FROM formulario where remetente = ?";
-    
+    private static final String BUSCAR = "SELECT* FROM formulario";
+    private static final String DELETAR = "DELETE FROM formulario WHERE remetente = ? ";
+    private static final String UPDATE = "UPDATE formulario SET destinatario = ? WHERE remetente = ?";
+
     public FormularioSQLDAO() throws SQLException, ClassNotFoundException {
         Class.forName(FormularioSQLDAO.DRIVER_NAME);
     }
@@ -53,15 +50,10 @@ public class FormularioSQLDAO {
     ;
     
     public void save(Formulario formulario) throws Exception {
-        
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        sdf.setLenient(false);
-       
-        java.util.Date dataConvertida = sdf.parse(sdf.format(formulario.getData()));
-        java.sql.Date sql = new java.sql.Date(dataConvertida.getTime());
-        
-        PreparedStatement stmt = this.getConnection().prepareStatement(FormularioSQLDAO.INSERIR);
 
+        java.sql.Date sql = new java.sql.Date(formulario.getData().getTime());
+
+        PreparedStatement stmt = this.getConnection().prepareStatement(FormularioSQLDAO.INSERIR);
         stmt.setString(1, formulario.getDestinatario());
         stmt.setString(2, formulario.getTelefaxDestinatario());
         stmt.setString(3, formulario.getEmailDestinatario());
@@ -73,23 +65,56 @@ public class FormularioSQLDAO {
         stmt.close();
 
     }
+
+    ;
     
-    public Formulario buscarByRemetente(String remetente) throws SQLException, ParseException{
+        public List<Formulario> findAll() throws SQLException, ParseException {
+
         PreparedStatement stmt = this.getConnection().prepareStatement(FormularioSQLDAO.BUSCAR);
-        stmt.setString(1, remetente);
+        stmt.execute();
         ResultSet rSet = stmt.executeQuery();
-        Formulario formulario = new Formulario();
-            while( rSet.next() ) {
-               formulario.setDestinatario(rSet.getString("destinatario")); 
-               formulario.setTelefaxDestinatario(rSet.getString("telefaxDestinatario")); 
-               formulario.setEmailDestinatario(rSet.getString("emailDestinatario"));
-               formulario.setRemetente(rSet.getString("remetente")); 
-               formulario.setTelefaxRemetente(rSet.getString("remetenteTelefax")); 
-               formulario.setEmailRemetente(rSet.getString("remetenteEmail")); 
-               formulario.setData(rSet.getDate("data"));
-            }
-            
-        return formulario;
+        List<Formulario> formularios = new ArrayList<Formulario>();
+
+        while (rSet.next()) {
+            Formulario formularioEncontrado = new Formulario();
+            formularioEncontrado.setDestinatario(rSet.getString("destinatario"));
+            formularioEncontrado.setTelefaxDestinatario(rSet.getString("telefaxDestinatario"));
+            formularioEncontrado.setEmailDestinatario(rSet.getString("emailDestinatario"));
+            formularioEncontrado.setRemetente(rSet.getString("remetente"));
+            formularioEncontrado.setTelefaxRemetente(rSet.getString("remetenteTelefax"));
+            formularioEncontrado.setEmailRemetente(rSet.getString("remetenteEmail"));
+            formularioEncontrado.setData(rSet.getDate("data"));
+
+            formularios.add(formularioEncontrado);
+
+        }
+
+        stmt.close();
+
+        return formularios;
+    }
+
+    public void delete(String remetente) throws Exception {
+
+        PreparedStatement stmt = this.getConnection().prepareStatement(FormularioSQLDAO.DELETAR);
+        stmt.setString(1, remetente);
+        stmt.execute();
+        stmt.close();
+
+    }
+
+    ;
+
+        public void update(Formulario formulario) throws SQLException {
+
+        java.sql.Date sql = new java.sql.Date(formulario.getData().getTime());
+        PreparedStatement stmt = this.getConnection().prepareStatement(FormularioSQLDAO.UPDATE);
+
+        stmt.setString(1, formulario.getDestinatario());
+        stmt.setString(2, formulario.getRemetente());
+        stmt.executeUpdate();
+        stmt.close();
+
     }
 
 }

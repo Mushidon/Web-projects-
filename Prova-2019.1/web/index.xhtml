@@ -2,48 +2,107 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
-      
+
         <title>Aplication</title>
     </h:head>
     <h:body>
         <h:form>
-            <h2><center>Sessão da tarde do IFBA<br>Curso de ADS </br>Salvador, Agosto de 2019 - IFBA</center></h2>
-        <p:growl id="msgGrowl" showDetail="true" sticky="false"/>
-            <p:panelGrid columns="2">
-        
-                <h:outputLabel for="para" value="Para:"></h:outputLabel>
-                <p:inputText id="destinatario" value="#{formularioBean.formulario.destinatario}" style="text-align:center" required="true"></p:inputText>
-                
-                <h:outputLabel for="telefax" value="Telefax:"></h:outputLabel>
-                <p:inputText id="telefaxDestinatario" value="#{formularioBean.formulario.telefaxDestinatario}" style="text-align:center" required="true"></p:inputText>
-               
-                <h:outputLabel for="email" value="e-mail:"></h:outputLabel>
-                <p:inputText id="emailDestinatario" value="#{formularioBean.formulario.emailDestinatario}" style="text-align:center" required="true"></p:inputText>
-                
-               
-            </p:panelGrid>
-        <br>
-        <p:panelGrid columns="2">
-             <h:outputLabel value="De:"></h:outputLabel>
-             <p:inputText id="remetente" value="#{formularioBean.formulario.remetente}" style="text-align:center" required="true"></p:inputText>
-             
-             <h:outputLabel  value="Telefax:"></h:outputLabel>
-             <p:inputText id="telefaxRemetente" value="#{formularioBean.formulario.telefaxRemetente}" style="text-align:center" required="true"></p:inputText>
-             
-             <h:outputLabel value="e-mail:"></h:outputLabel>
-             <p:inputText id="emailRemetente" value="#{formularioBean.formulario.emailRemetente}" style="text-align:center" required="true"></p:inputText>
+            <div align="center">
+                <h2>Sessão da tarde do IFBA<br>Curso de ADS </br>Salvador, Agosto de 2019 - IFBA</h2>
+                <p:growl id="msgGrowl" showDetail="true" sticky="false"/>
+                <p:panelGrid columns="2">
+
+                    <h:outputLabel for="destinatario" value="Para:"></h:outputLabel>
+                    <p:inputText id="destinatario" value="#{formularioBean.formulario.destinatario}" style="text-align:center" required="false"></p:inputText>
+
+                    <h:outputLabel for="telefaxDestinatario" value="Telefax:"></h:outputLabel>
+                    <p:inputText id="telefaxDestinatario" value="#{formularioBean.formulario.telefaxDestinatario}" style="text-align:center" required="false"></p:inputText>
+
+                    <h:outputLabel for="emailDestinatario" value="e-mail:"></h:outputLabel>
+                    <p:inputText id="emailDestinatario" value="#{formularioBean.formulario.emailDestinatario}" style="text-align:center" required="false"></p:inputText>
+
+
+                </p:panelGrid>
+                <br>
+                    
+                        <p:panelGrid columns="2">
+                            <h:outputLabel for="remetente" value="De:"></h:outputLabel>
+                            <p:inputText id="remetente" value="#{formularioBean.formulario.remetente}" style="text-align:center" required="false"></p:inputText>
+
+                            <h:outputLabel for="telefaxRemetente" value="Telefax:"></h:outputLabel>
+                            <p:inputText id="telefaxRemetente" value="#{formularioBean.formulario.telefaxRemetente}" style="text-align:center" required="false"></p:inputText>
+
+                            <h:outputLabel for="emailRemetente" value="e-mail:"></h:outputLabel>
+                            <p:inputText id="emailRemetente" value="#{formularioBean.formulario.emailRemetente}" style="text-align:center" required="false"></p:inputText>
+
+                            <h:outputLabel for="data" value="Data:" ></h:outputLabel>
+                            <p:calendar id="data" value="#{formularioBean.formulario.data}" pattern="dd/MM/yyyy"   />
+                        </p:panelGrid>
+                    
+                </br>   
+                <br>
+                    <p:commandButton value="Enviar" style="text-align:center" actionListener="#{formularioBean.enviar()}" update="msgGrowl" />
+
+                </br>
+
+                <br>
+                    <h2>Lista de inscritos</h2>
+                    <p:dataTable var="formulario" value="#{formularioBean.formularios}"  paginator="true" rows="10"
+                                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                 rowsPerPageTemplate="5,10,15" selectionMode="single" selection="#{formularioBean.formularioSelecionado}" rowKey="#{formulario.destinatario}" >
+                        
+                        
+                        
+                          <p:column headerText="Destinatario">
+                            <h:outputText value="#{formulario.destinatario}" />
+                        </p:column>
+                        
+                         <p:column headerText="Telefax Destinatario">
+                            <h:outputText value="#{formulario.telefaxDestinatario}" />
+                        </p:column>
+                        
+                        
+                            <p:column headerText="Email Destinatario">
+                            <h:outputText value="#{formulario.emailDestinatario}" />
+                        </p:column>
+                        
+                        
+                        <p:column headerText="Remetente">
+                            <h:outputText value="#{formulario.remetente}" />
+                        </p:column>
+
+                        <p:column headerText="Telefax">
+                            <h:outputText value="#{formulario.telefaxRemetente}" />
+                        </p:column>
+
+                        <p:column headerText="Email">
+                            <h:outputText value="#{formulario.emailRemetente}" />
+                        </p:column>
+
+                        <p:column headerText="Data">
+                            <h:outputText value="#{formulario.data}" />
+                        </p:column>
+
+
+
+
+
+
+                    </p:dataTable>
+                </br>
+
             
-             <h:outputLabel  value="Data:" ></h:outputLabel>
-             <p:calendar id="data" value="#{formularioBean.formulario.data}" pattern="dd/MM/yyyy"   />
-        </p:panelGrid>
-        </br>   
-        <br>
-              <p:commandButton value="Enviar" style="text-align:center" actionListener="#{formularioBean.save()}" update="msgGrowl" />
-              <p:commandButton value="Ver data" style="text-align:center" actionListener="#{formularioBean.exibirData()}" update="msgGrowl" />
-              <p:commandButton value="Buscar no Banco" style="text-align:center" actionListener="#{formularioBean.buscarData()}" update="msgGrowl" />
-        </br>
+
+            <p:commandButton value="Alterar" style="text-align:center" actionListener="#{formularioBean.alterar()}" update="msgGrowl" />
+            <p:commandButton value="Excluir" style="text-align:center" actionListener="#{formularioBean.remover()}" update="msgGrowl" />
+            </div>
+           
+
+
+
         </h:form>
     </h:body>
 </html>
